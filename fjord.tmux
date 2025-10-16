@@ -1,72 +1,54 @@
-# tmux-fjord — Fjord theme
-# Author: jshuntley
-# Version: 1.0.0
+#!/usr/bin/env bash
+# Copyright (c) 2025 jshuntley
 
-# Truecolor support
-set -g default-terminal "tmux-256color"
-set -ga terminal-overrides ",*:Tc"
+FJORD_TMUX_COLOR_THEME_FILE=src/fjord.conf
+FJORD_TMUX_VERSION=0.1.0
+FJORD_TMUX_STATUS_CONTENT_FILE="src/fjord-status-content.conf"
+FJORD_TMUX_STATUS_CONTENT_NO_PATCHED_FONT_FILE="src/fjord-status-content-no-patched-font.conf"
+FJORD_TMUX_STATUS_CONTENT_OPTION="@fjord_tmux_show_status_content"
+FJORD_TMUX_STATUS_CONTENT_DATE_FORMAT="@fjord_tmux_date_format"
+FJORD_TMUX_NO_PATCHED_FONT_OPTION="@fjord_tmux_no_patched_font"
+_current_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Palette
-set -g @fjord-bg          "#1B2532"
-set -g @fjord-fg          "#E4EDE5"
-set -g @fjord-muted       "#6C7A86"
-set -g @fjord-line        "#233141"
-set -g @fjord-green       "#9DD99A"
-set -g @fjord-blue        "#5DA6EA"
-set -g @fjord-cyan        "#B8E7E9"
-set -g @fjord-amber       "#FFD285"
-set -g @fjord-red         "#F37C7C"
-set -g @fjord-purple      "#B9A0F8"
+__cleanup() {
+  unset -v FJORD_TMUX_COLOR_THEME_FILE FJORD_TMUX_VERSION
+  unset -v FJORD_TMUX_STATUS_CONTENT_FILE FJORD_TMUX_STATUS_CONTENT_NO_PATCHED_FONT_FILE
+  unset -v FJORD_TMUX_STATUS_CONTENT_OPTION FJORD_TMUX_NO_PATCHED_FONT_OPTION
+  unset -v FJORD_TMUX_STATUS_CONTENT_DATE_FORMAT
+  unset -v _current_dir
+  unset -f __load __cleanup
+  tmux set-environment -gu FJORD_TMUX_STATUS_TIME_FORMAT
+  tmux set-environment -gu FJORD_TMUX_STATUS_DATE_FORMAT
+}
 
-# Status Bar
-set -g status on
-set -g status-bg "#1B2532"
-set -g status-fg "#6C7A86"
-set -g status-justify centre
-set -g status-position bottom
-set -g status-interval 2
+__load() {
+  tmux source-file "$_current_dir/$FJORD_TMUX_COLOR_THEME_FILE"
 
-# Left: session name in green
-set -g status-left-length 40
-set -g status-left "#[fg=#1B2532,bg=#9DD99A] #[fg=#1B2532,bg=#9DD99A] #S #[fg=#9DD99A,bg=#1B2532] "
+  local status_content=$(tmux show-option -gqv "$FJORD_TMUX_STATUS_CONTENT_OPTION")
+  local no_patched_font=$(tmux show-option -gqv "$FJORD_TMUX_NO_PATCHED_FONT_OPTION")
+  local date_format=$(tmux show-option -gqv "$FJORD_TMUX_STATUS_CONTENT_DATE_FORMAT")
 
-# Right: time and date in blue + cyan
-set -g status-right-length 80
-set -g status-right " #[fg=#1B2532,bg=#5DA6EA]#[fg=#1B2532,bg=#5DA6EA] %R #[fg=#5DA6EA,bg=#1B2532] #[fg=#1B2532,bg=#B8E7E9]#[fg=#1B2532,bg=#B8E7E9] %Y-%m-%d #[fg=#B8E7E9,bg=#1B2532] "
+  if [ "$(tmux show-option -gqv "clock-mode-style")" == '12' ]; then
+    tmux set-environment -g FJORD_TMUX_STATUS_TIME_FORMAT "%I:%M %p"
+  else
+    tmux set-environment -g FJORD_TMUX_STATUS_TIME_FORMAT "%H:%M"
+  fi
 
-# Windows
-set -g window-status-format " #I:#W#F "
-set -g window-status-style "fg=#6C7A86,bg=#1B2532"
+  if [ -z "$date_format" ]; then
+    tmux set-environment -g FJORD_TMUX_STATUS_DATE_FORMAT "%Y-%m-%d"
+  else
+    tmux set-environment -g FJORD_TMUX_STATUS_DATE_FORMAT "$date_format"
+  fi
 
-set -g window-status-current-format "#[fg=#1B2532,bg=#5DA6EA] #[fg=#1B2532,bg=#5DA6EA] #I:#W #[fg=#5DA6EA,bg=#1B2532]"
-set -g window-status-current-style "fg=#1B2532,bg=#5DA6EA,bold"
+  if [ "$status_content" != "0" ]; then
+    if [ "$no_patched_font" != "1" ]; then
+      tmux source-file "$_current_dir/$FJORD_TMUX_STATUS_CONTENT_FILE"
+    else
+      tmux source-file "$_current_dir/$FJORD_TMUX_STATUS_CONTENT_NO_PATCHED_FONT_FILE"
+    fi
+  fi
+}
 
-set -g window-status-activity-style "fg=#FFD285,bg=#1B2532"
-set -g window-status-bell-style "fg=#F37C7C,bg=#1B2532,bold"
-
-# Panes
-set -g pane-border-style "fg=#233141"
-set -g pane-active-border-style "fg=#9DD99A"
-
-# Display pane numbers overlay
-set -g display-panes-active-style "bg=#FFD285,fg=#1B2532"
-set -g display-panes-style "bg=#5DA6EA,fg=#1B2532"
-set -g display-panes-time 1000
-
-# Messages and prompts
-set -g message-style "bg=#FFD285,fg=#1B2532"
-set -g message-command-style "bg=#5DA6EA,fg=#1B2532"
-
-# Modes (copy/choose-tree)
-set -g mode-style "bg=#233141,fg=#E4EDE5"
-setw -g mode-keys vi
-setw -g copy-mode-match-style "bg=#5DA6EA,fg=#1B2532"
-setw -g copy-mode-current-match-style "bg=#FFD285,fg=#1B2532"
-
-# Clock
-setw -g clock-mode-colour "#7BB8FF"
-setw -g clock-mode-style 24
-
-# Mouse (optional)
-set -g mouse on
+__load
+__cleanup
 
