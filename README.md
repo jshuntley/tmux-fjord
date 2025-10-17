@@ -73,6 +73,13 @@ To use tmux-prefix-highlight, install it AFTER the Fjord theme:
 set -g @plugin 'jshuntley/tmux-fjord'
 set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
 ```
+## Screenshots
+
+![tmux clock](images/clock.png "Clock")
+<br></br>
+![tmux clock](images/gotop.png "gotop")
+<br></br>
+![tmux clock](images/helix.png "Helix")
 
 ## Credits
 
