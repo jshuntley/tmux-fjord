@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2016-present Sven Greb <development@svengreb.de>
 # Copyright (c) 2025 jshuntley
+# This source code is licensed under the MIT license found in the LICENSE file.
 
 FJORD_TMUX_COLOR_THEME_FILE=src/fjord.conf
 FJORD_TMUX_VERSION=0.1.0
