@@ -1,6 +1,8 @@
 # Fjord tmux
 
-A clean and elegant tmux color theme plugin inspired by Nordic fjords.
+A clean and elegant tmux color theme plugin with the [Fjord](https://github.com/jshuntley/fjord) color scheme inspired by Nord and Ayu Mirage.
+
+![tmux clock](images/gotop.png "gotop")
 
 ## About
 
@@ -76,8 +78,6 @@ set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
 ## Screenshots
 
 ![tmux clock](images/clock.png "Clock")
-<br></br>
-![tmux clock](images/gotop.png "gotop")
 <br></br>
 ![tmux clock](images/helix.png "Helix")
 
