@@ -1,6 +1,6 @@
 # Fjord tmux
 
-A clean and elegant tmux color theme inspired by Nordic fjords.
+A clean and elegant tmux color theme plugin inspired by Nordic fjords.
 
 ## About
 
